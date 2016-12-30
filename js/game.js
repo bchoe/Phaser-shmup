@@ -6,6 +6,7 @@
   let player;
   const INITIAL_MOVESPEED = 10;
   let cursors;
+  let playerBullets;
 
   //Ecma script, _ = ()
 
@@ -15,36 +16,43 @@
 
   const create = _ => {
     cursors = game.input.keyboard.createCursorKeys();
+    cursors.fire = game.input.keyboard.addKey(Phaser.KeyCode.SPACEBAR);
+    cursors.fire.onUp.add( handlePlayerFire );
     player = game.add.sprite(210, 500, GFX, 8);
     player.moveSpeed = INITIAL_MOVESPEED;
+    playerBullets = game.add.group();
   };
 
   const handlePlayerMovement = _ => {
-  let movingH = Math.sqrt(2);
-  let movingV = Math.sqrt(2);
-  if( cursors.up.isDown || cursors.down.isDown){
-    movingH = 1; // slow down diagonal movement
-  }
-  if( cursors.left.isDown || cursors.right.isDown){
-    movingV = 1; // slow down diagonal movement
-  }
-  switch( true ){
-    case cursors.left.isDown:
-      player.x -= player.moveSpeed * movingH;
-      break;
-    case cursors.right.isDown:
-      player.x += player.moveSpeed * movingH;
-      break;
-  }
-  switch( true ){
-    case cursors.down.isDown:
-      player.y += player.moveSpeed * movingV;
-      break;
-    case cursors.up.isDown:
-      player.y -= player.moveSpeed * movingV;
-      break;
-  }
-};
+    let movingH = Math.sqrt(2);
+    let movingV = Math.sqrt(2);
+    if( cursors.up.isDown || cursors.down.isDown){
+      movingH = 1; // slow down diagonal movement
+    }
+    if( cursors.left.isDown || cursors.right.isDown){
+      movingV = 1; // slow down diagonal movement
+    }
+    switch( true ){
+      case cursors.left.isDown:
+        player.x -= player.moveSpeed * movingH;
+        break;
+      case cursors.right.isDown:
+        player.x += player.moveSpeed * movingH;
+        break;
+    }
+    switch( true ){
+      case cursors.down.isDown:
+        player.y += player.moveSpeed * movingV;
+        break;
+      case cursors.up.isDown:
+        player.y -= player.moveSpeed * movingV;
+        break;
+    }
+  };
+
+  const handlePlayerFire = _ => {
+    console.log("fire");
+  };
 
   const update = _ => {
     handlePlayerMovement();
