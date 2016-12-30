@@ -51,7 +51,7 @@
   };
 
   const handlePlayerFire = _ => {
-    console.log("fire");
+    playerBullets.add( game.add.sprite(player.x, player.y, GFX, 7) );
   };
 
   const update = _ => {
