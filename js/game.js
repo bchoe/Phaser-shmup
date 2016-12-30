@@ -3,8 +3,9 @@
   const GAME_HEIGHT = 600;
   const GAME_CONTAINER_ID = 'game';
   const GFX = 'gfx';
-  let player;
   const INITIAL_MOVESPEED = 10;
+  const PLAYER_BULLET_SPEED = 1;
+  let player;
   let cursors;
   let playerBullets;
 
@@ -54,8 +55,13 @@
     playerBullets.add( game.add.sprite(player.x, player.y, GFX, 7) );
   };
 
+  const handleBulletAnimations = _ => {
+    playerBullets.children.forEach( bullet => bullet.y -= PLAYER_BULLET_SPEED );
+  };
+
   const update = _ => {
     handlePlayerMovement();
+    handleBulletAnimations();
   };
 
   const game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, GAME_CONTAINER_ID, { preload, create, update });
