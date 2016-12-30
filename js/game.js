@@ -7,6 +7,8 @@
   const PLAYER_BULLET_SPEED = 1;
   const ENEMY_SPAWN_FREQ = 100; // higher is less frequent
   const ENEMY_SPEED = 4.5;
+  const removeBullet = bullet => bullet.destroy();
+  const destroyEnemy = enemy => enemy.kill();
   let player;
   let cursors;
   let playerBullets;
@@ -75,6 +77,40 @@
     enemies.children.forEach( enemy => enemy.y += ENEMY_SPEED );
   };
 
+  const handleCollisions = _ => {
+    // check if any bullets touch any enemies
+    let enemiesHit = enemies.children
+      .filter( enemy => enemy.alive )
+      .filter( enemy => enemy.overlap(playerBullets) );
+
+    if( enemiesHit.length > 0 ){
+      // clean up bullets that land
+      playerBullets.children
+        .filter( bullet => bullet.overlap(enemies) )
+        .forEach( removeBullet );
+
+      enemiesHit.forEach( destroyEnemy );
+    }
+    // check if enemies hit the player
+    enemiesHit = enemies.children
+      .filter( enemy => enemy.overlap(player) );
+
+    if( enemiesHit.length > 0 ){
+      handlePlayerHit();
+
+      enemiesHit.forEach( destroyEnemy );
+    }
+  };
+
+  const gameOver = _ => {
+    game.state.destroy();
+    game.add.text(180, 200, 'O NOES', { fill: '#FFFFFF' });
+  };
+
+  const handlePlayerHit = _ => {
+    gameOver();
+  };
+
   const cleanup = _ => {
     playerBullets.children
       .filter( bullet => bullet.y < 0 )
@@ -86,6 +122,7 @@
     handleBulletAnimations1();
     handleEnemyActions();
     randomlySpawnEnemy();
+    handleCollisions();
 
     cleanup();
   };
