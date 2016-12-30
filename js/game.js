@@ -5,9 +5,12 @@
   const GFX = 'gfx';
   const INITIAL_MOVESPEED = 10;
   const PLAYER_BULLET_SPEED = 1;
+  const ENEMY_SPAWN_FREQ = 100; // higher is less frequent
+  const ENEMY_SPEED = 4.5;
   let player;
   let cursors;
   let playerBullets;
+  let enemies;
 
   //Ecma script, _ = ()
 
@@ -22,7 +25,16 @@
     player = game.add.sprite(210, 500, GFX, 8);
     player.moveSpeed = INITIAL_MOVESPEED;
     playerBullets = game.add.group();
+    enemies = game.add.group();
   };
+
+
+  const randomlySpawnEnemy = _ => {
+    if( Math.floor(Math.random()*ENEMY_SPAWN_FREQ) === 0 ){
+      let randomX = Math.floor( Math.random()*GAME_WIDTH );
+      enemies.add( game.add.sprite(randomX, -24, GFX, 0) );
+    }
+  }
 
   const handlePlayerMovement = _ => {
     let movingH = Math.sqrt(2);
@@ -55,13 +67,27 @@
     playerBullets.add( game.add.sprite(player.x, player.y, GFX, 7) );
   };
 
-  const handleBulletAnimations = _ => {
+  const handleBulletAnimations1 = _ => {
     playerBullets.children.forEach( bullet => bullet.y -= PLAYER_BULLET_SPEED );
+  };
+
+  const handleEnemyActions = _ => {
+    enemies.children.forEach( enemy => enemy.y += ENEMY_SPEED );
+  };
+
+  const cleanup = _ => {
+    playerBullets.children
+      .filter( bullet => bullet.y < 0 )
+      .forEach( bullet => bullet.destroy() );
   };
 
   const update = _ => {
     handlePlayerMovement();
-    handleBulletAnimations();
+    handleBulletAnimations1();
+    handleEnemyActions();
+    randomlySpawnEnemy();
+
+    cleanup();
   };
 
   const game = new Phaser.Game(GAME_WIDTH, GAME_HEIGHT, Phaser.AUTO, GAME_CONTAINER_ID, { preload, create, update });
